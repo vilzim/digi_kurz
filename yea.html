@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Kurzy Měn ČNB</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e8eff1;
+            color: #333;
+            line-height: 1.6;
+        }
+    
+        h3 {
+            text-align: center;
+            color: #35424a;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+    
+        th, td {
+            padding: 10px;
+            border: 1px solid #dde;
+            text-align: left;
+        }
+    
+        th {
+            background-color: #58b3b8;
+            color: #fff;
+            font-weight: normal;
+        }
+    
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    
+        tr:hover {
+            background-color: #ddd;
+        }
+    
+        a {
+            color: #58b3b8;
+            text-decoration: none;
+        }
+    
+        a:hover {
+            text-decoration: underline;
+        }
+    
+        @media screen and (max-width: 600px) {
+            table {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="kl"></div>
+
+    <script>
+    function js_render(t, d) {
+        return t.replace(/\n/g, "~").replace(/\{([^\:\}]+)\}|\{ds\:(\w+)\}(.*?)\{\/ds\}/g, function(a, n, s, ts) {
+            let h = '';
+            try {
+                if (n) return d[n];
+                let ds = d[s];
+                for (let c in ds) {
+                    if (ds.hasOwnProperty(c)) h += js_render(ts, ds[c]);
+                }
+            } catch (e) {}
+            return h;
+        }).replace(/~/g, '\n');
+    }
+
+    function vypiskurzy(data) {
+        let t = '<h3>Kurzy <a href="{url}">{banka}</a></h3><table><tr><th>Měna</th><th>Jednotka</th><th>Kurz</th></tr>';
+        t += '{ds:kurzy}<tr><td><a href="{url}">{nazev}</a></td><td align="right">{jednotka}</td><td align="right">{dev_stred}</td></tr>{/ds}';
+        t += '</table>';
+
+        let html = js_render(t, data);
+        document.getElementById("kl").innerHTML = html;
+    }
+    </script>
+    <script async="1" src="https://data.kurzy.cz/json/meny/b[6]cb[vypiskurzy].js"></script>
+
+    Zdroj dat: <a href="https://www.kurzy.cz/">kurzy.cz</a>
+</body>
+</html>
